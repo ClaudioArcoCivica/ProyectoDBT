@@ -35,8 +35,32 @@ clean-targets:         # directories to be removed by `dbt clean`
 # continue to be built as views. These settings can be overridden in the individual model files
 # using the `{{ config(...) }}` macro.
 
+seeds:
+  analytics:
+    plant_weights:
+      enabled: true
+
+
 models:
   my_new_project:
-    # Applies to all files under models/example/
-    example:
+    # Configuración general para staging models
+    staging:
+      +materialized: view
+      +database: "{{ env_var('DBT_ENVIRONMENTS') }}_SILVER_DB"
+
+      sql_server_dbo:
+        +schema: dbt_carco 
+
+      google_sheets:
+        +schema: dbt_carco 
+
+    # Configuración general para mart models
+    marts:
       +materialized: table
+      +database: "{{ env_var('DBT_ENVIRONMENTS') }}_GOLD_DB"
+
+      intermediate:
+        +schema: dbt_carco
+
+      core:
+        +schema: dbt_carco
